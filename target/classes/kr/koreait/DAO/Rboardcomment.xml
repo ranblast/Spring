@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.koreait.DAO.RboardCommentDAO">
+
+	<insert id="insertComment" parameterType="kr.koreait.VO.RBoardCommentVO">
+		insert into rboard_comment (idx, ref, name, password, content, wdate, ip) 
+		values (rboard_idx_seq.nextval, #{ref}, #{name}, #{password}, #{content}, #{wdate}, #{ip})
+	</insert>
+
+	<select id="commentCount" parameterType="int" resultType="int">
+		 select count(*) from rboard_comment where ref = #{idx}
+	</select>
+	
+	<select id="commentSelect" parameterType="int" resultType="kr.koreait.VO.RBoardCommentVO">
+		select * from rboard_comment where ref = #{idx} order by idx desc
+	</select>
+	
+	<select id="commentByIdx" parameterType="int" resultType="kr.koreait.VO.RBoardCommentVO">
+		select * from rboard_comment where idx = #{idx}
+	</select>
+	
+	<delete id="commentDelete" parameterType="int">
+		delete from rboard_comment where idx = #{idx}
+	</delete>
+	
+	<update id="commentUpdate" parameterType="kr.koreait.VO.RBoardCommentVO">
+		update rboard_comment set content = #{content} where idx = #{idx}
+	</update>
+</mapper>

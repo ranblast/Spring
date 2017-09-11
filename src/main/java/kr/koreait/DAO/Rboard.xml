@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.koreait.DAO.RboardDAO">
+
+	<insert id="insert" parameterType="kr.koreait.VO.RBoardVO">
+		insert into rboard (idx, ref, lev, seq, name, password, title, content, wdate, hit, ip) 
+		values (rboard_idx_seq.NEXTVAL, rboard_idx_seq.CURRVAL, 0, 0, #{name}, #{password}, #{title}, #{content}, #{wdate}, #{hit}, #{ip})
+	</insert>
+	
+	<select id="selectCount" resultType="int">
+		 SELECT COUNT(*) FROM rboard
+	</select>
+
+
+	<select id="selectList" parameterType="java.util.HashMap" resultType="kr.koreait.VO.RBoardVO">
+		<!-- <![CDATA[ 부터 ]]> 사이에 입력하는 내용은 무조건 문자열로 취급된다. -->
+		<![CDATA[
+		select * from (
+			select rownum rnum, T.* from (
+				select * from rboard order by ref desc, seq asc
+			) T where rownum <= #{endNo}
+		) where rnum >= #{startNo}
+		]]>
+	</select>
+	
+	<select id="View" parameterType="int" resultType="kr.koreait.VO.RBoardVO">
+		select * from rboard where idx = #{idx}
+	</select>
+	
+	<select id="selectNotice" resultType="kr.koreait.VO.RBoardVO">
+		select * from rboard where notice = 'notice' order by idx desc
+	</select>
+	
+	<update id="hitUpdate" parameterType="int">
+		update rboard set hit = hit + 1 where idx = #{idx}
+	</update>
+	
+	<delete id="delete" parameterType="int">
+		delete from rboard where idx = #{idx}
+	</delete>
+	
+	<update id="edit" parameterType="kr.koreait.VO.RBoardVO">
+		update rboard set content = #{content} where idx = #{idx}
+	</update>
+	
+	<update id="increment" parameterType="int">
+		update rboard set hit = hit + 1 where idx = #{idx}
+	</update>
+	
+	<update id="replyIncrement" parameterType="java.util.HashMap">
+		<![CDATA[
+		update rboard set seq = seq + 1 where ref = #{ref} and seq >= #{seq}
+		]]>
+	</update>
+	
+	<insert id="replyInsert" parameterType="kr.koreait.VO.RBoardVO">
+		insert into rboard (idx, ref, lev, seq, name, password, title, content, wdate, hit, ip)
+		values (rboard_idx_seq.nextval, #{ref}, #{lev}, #{seq}, #{name}, #{password}, #{title}, #{content}, #{wdate}, #{hit}, #{ip})
+	</insert>
+</mapper>
